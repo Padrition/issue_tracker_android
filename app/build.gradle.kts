@@ -15,7 +15,7 @@ properties.load(project.rootProject.file("local.properties").reader())
 
 android {
     namespace = "cz.mendelu.projek"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "cz.mendelu.projek"

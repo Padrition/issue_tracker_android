@@ -15,7 +15,7 @@ retrofit_v = "2.9.0"
 logging_v = "4.9.3"
 moshi_v = "1.14.0"
 navigation_v = "2.7.5"
-ksp-version = "1.9.0-1.0.13"
+ksp-version = "2.0.0-1.0.22"
 
 room = "2.6.1"
 lifecycle = "2.7.0"
