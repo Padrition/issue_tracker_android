@@ -1,6 +1,7 @@
 package cz.mendelu.projek.ui.screens.login_screen
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +39,8 @@ fun LoginScreen(
 
     BaseScreen{
         LoginScreenContent(
-            paddingValues = it
+            paddingValues = it,
+            navigation
         )
     }
 }
@@ -46,6 +48,7 @@ fun LoginScreen(
 @Composable
 fun LoginScreenContent(
     paddingValues: PaddingValues,
+    navigation: INavigationRouter,
 ) {
     Column(
         modifier = Modifier
@@ -104,9 +107,13 @@ fun LoginScreenContent(
                 fontWeight = FontWeight.Normal,
             )
             Text(
+                modifier = Modifier
+                    .clickable {
+                        navigation.navigateToRegisterScreen()
+                    },
                 text = "singing up",
                 fontFamily = MPLUSRounded1C,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
             )
         }
     }
