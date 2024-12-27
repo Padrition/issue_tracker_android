@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">projek</string>
     <string name="back">Back</string>
+    <string name="connectionError">Connection Error</string>
+    <string name="error">Error</string>
+    <string name="exception">Exception</string>
 </resources>

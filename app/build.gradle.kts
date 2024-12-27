@@ -3,7 +3,6 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
     alias(libs.plugins.com.google.dagger.hilt.android)
     alias(libs.plugins.com.google.devtools.ksp)
@@ -47,6 +46,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     buildFeatures {
         compose = true
@@ -93,9 +95,4 @@ dependencies {
     implementation(libs.navigation.compose)
 
     implementation(libs.lifecycle)
-    implementation(libs.room.ktx)
-    implementation(libs.room.viewmodel)
-    implementation(libs.room.lifecycle)
-    implementation(libs.room.runtime)
-    kapt(libs.room.compiler.kapt)
 }

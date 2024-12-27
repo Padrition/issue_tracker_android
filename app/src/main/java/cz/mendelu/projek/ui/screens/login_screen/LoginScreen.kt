@@ -1,6 +1,7 @@
 package cz.mendelu.projek.ui.screens.login_screen
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,11 +12,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +34,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import cz.mendelu.projek.R
 import cz.mendelu.projek.navigation.INavigationRouter
 import cz.mendelu.projek.ui.elements.BaseScreen
@@ -37,10 +48,45 @@ fun LoginScreen(
 ){
     Log.d("LoginScreen", "Entered Login Screen")
 
+    val viewModel = hiltViewModel<LoginScreenViewModel>()
+
+    val state = viewModel.uiState.collectAsStateWithLifecycle()
+
+    var data by remember {
+        mutableStateOf(LoginScreenData())
+    }
+
+    var loading by remember {
+        mutableStateOf(false)
+    }
+
+    loading = state.value == LoginScreenUIState.Loading
+
+    state.value.let {
+        when(it){
+            LoginScreenUIState.Idle -> {
+
+            }
+            LoginScreenUIState.Loading -> {
+
+            }
+            is LoginScreenUIState.LoginCredentialsChanged -> {
+                data = it.data
+            }
+
+            is LoginScreenUIState.Error -> {
+
+            }
+        }
+    }
+
     BaseScreen{
         LoginScreenContent(
             paddingValues = it,
-            navigation
+            navigation = navigation,
+            screenData = data,
+            viewModel = viewModel,
+            loading = loading
         )
     }
 }
@@ -49,72 +95,105 @@ fun LoginScreen(
 fun LoginScreenContent(
     paddingValues: PaddingValues,
     navigation: INavigationRouter,
+    screenData: LoginScreenData,
+    viewModel: LoginScreenViewModel,
+    loading: Boolean,
 ) {
-    Column(
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues),
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(paddingValues)
     ) {
-        Spacer(Modifier.weight(0.2f))
-        Text(
-            text = "Login",
-            fontFamily = MPLUSRounded1C,
-            fontWeight = FontWeight.Normal,
-            fontSize = 64.sp,
-        )
-
-        OutlinedTextField(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 36.dp),
-            value = "email",
-            onValueChange = {},
-            label = {
-                Text("Email")
-            }
-        )
+                .fillMaxSize()
+                .padding(paddingValues),
 
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 36.dp),
-            value = "password",
-            onValueChange = {},
-            label = {
-                Text("Password")
-            },
-            visualTransformation = PasswordVisualTransformation()
-        )
-
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(36.dp),
-            onClick = {}
-        ){
-            Text("Login")
-        }
-
-        Spacer(Modifier.weight(1.0f))
-
-        Row {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Spacer(Modifier.weight(0.2f))
             Text(
-                text = "Or create an account by ",
+                text = "Login",
                 fontFamily = MPLUSRounded1C,
                 fontWeight = FontWeight.Normal,
+                fontSize = 64.sp,
             )
-            Text(
+
+            OutlinedTextField(
                 modifier = Modifier
-                    .clickable {
-                        navigation.navigateToRegisterScreen()
-                    },
-                text = "singing up",
-                fontFamily = MPLUSRounded1C,
-                fontWeight = FontWeight.Bold,
+                    .fillMaxWidth()
+                    .padding(horizontal = 36.dp),
+                value = "${screenData.signIn.email}",
+                onValueChange = {
+                    viewModel.onEmailChange(it)
+                },
+                label = {
+                    Text("Email")
+                }
             )
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 36.dp),
+                value = "${screenData.signIn.password}",
+                onValueChange = {
+                    viewModel.onPasswordChange(it)
+                },
+                label = {
+                    Text("Password")
+                },
+                visualTransformation = PasswordVisualTransformation()
+            )
+
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(36.dp),
+                onClick = {
+                    viewModel.signIn()
+                }
+            ) {
+                Text("Login")
+            }
+
+            Spacer(Modifier.weight(1.0f))
+
+            Row {
+                Text(
+                    text = "Or create an account by ",
+                    fontFamily = MPLUSRounded1C,
+                    fontWeight = FontWeight.Normal,
+                )
+                Text(
+                    modifier = Modifier
+                        .clickable {
+                            navigation.navigateToRegisterScreen()
+                        },
+                    text = "singing up",
+                    fontFamily = MPLUSRounded1C,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+
+        if(loading){
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f)
+                    ),
+                contentAlignment = Alignment.Center
+            ){
+                CircularProgressIndicator(
+                    modifier = Modifier.width(64.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                )
+            }
         }
     }
 }
