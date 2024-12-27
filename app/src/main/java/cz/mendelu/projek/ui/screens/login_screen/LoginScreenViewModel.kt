@@ -6,11 +6,13 @@ import androidx.lifecycle.viewModelScope
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.auth.AuthRemoteRepositoryImpl
+import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,13 +20,22 @@ import okhttp3.Dispatcher
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor(private val repository: AuthRemoteRepositoryImpl): ViewModel() {
+class LoginScreenViewModel @Inject constructor(
+    private val repository: AuthRemoteRepositoryImpl,
+    private val dataStoreManager: DataStoreManager
+): ViewModel() {
 
     private val _uiState: MutableStateFlow<LoginScreenUIState> =
         MutableStateFlow(value = LoginScreenUIState.Idle)
     val uiState: StateFlow<LoginScreenUIState> get() = _uiState.asStateFlow()
 
     var data = LoginScreenData()
+
+    init {
+        viewModelScope.launch {
+            Log.d("Datastore test", "access : ${dataStoreManager.accessTokenFlow.first()} refresh: ${dataStoreManager.refreshTokenFlow.first()}")
+        }
+    }
 
     fun onEmailChange(email: String?){
         data.signIn.email = email
@@ -71,6 +82,12 @@ class LoginScreenViewModel @Inject constructor(private val repository: AuthRemot
                 }
                 is CommunicationResult.Success -> {
                     Log.d("LoginScreenViewModel", "Success ${result.data}")
+                    if (result.data.accessToken != null && result.data.refreshToken != null){
+                        dataStoreManager.updateTokens(result.data.accessToken!!, result.data.refreshToken!!)
+                    }
+                    _uiState.update {
+                        LoginScreenUIState.SignedIn
+                    }
                 }
             }
         }

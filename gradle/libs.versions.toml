@@ -19,6 +19,7 @@ ksp-version = "1.9.0-1.0.13"
 
 lifecycle = "2.7.0"
 
+datastore-version = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,8 @@ navigation-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", ve
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation_v" }
 
 lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+
+datastore = {group = "androidx.datastore", name="datastore-preferences", version.ref="datastore-version"}
 
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi_v" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi_v" }

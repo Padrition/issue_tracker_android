@@ -77,6 +77,10 @@ fun LoginScreen(
             is LoginScreenUIState.Error -> {
 
             }
+
+            is LoginScreenUIState.SignedIn -> {
+
+            }
         }
     }
 
@@ -125,7 +129,7 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 36.dp),
-                value = "${screenData.signIn.email}",
+                value = screenData.signIn.email  ?: "",
                 onValueChange = {
                     viewModel.onEmailChange(it)
                 },
@@ -138,7 +142,7 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 36.dp),
-                value = "${screenData.signIn.password}",
+                value = screenData.signIn.password ?: "",
                 onValueChange = {
                     viewModel.onPasswordChange(it)
                 },

@@ -7,4 +7,5 @@ sealed class LoginScreenUIState(): Serializable {
     object Loading: LoginScreenUIState()
     class LoginCredentialsChanged(var data: LoginScreenData): LoginScreenUIState()
     class Error(val error: LoginScreenError): LoginScreenUIState()
+    object SignedIn: LoginScreenUIState()
 }
