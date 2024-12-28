@@ -62,6 +62,20 @@ fun LoginScreen(
 
     loading = state.value == LoginScreenUIState.Loading
 
+    var error by remember {
+        mutableStateOf(false)
+    }
+
+    error = state.value is LoginScreenUIState.Error
+
+    var errorMessage by remember {
+        mutableStateOf("")
+    }
+
+    if (error){
+        errorMessage = stringResource(id = (state.value as LoginScreenUIState.Error).error.communicationError)
+    }
+
     state.value.let {
         when(it){
             LoginScreenUIState.Idle -> {
@@ -74,7 +88,6 @@ fun LoginScreen(
                 data = it.data
             }
             is LoginScreenUIState.Error -> {
-
             }
             is LoginScreenUIState.SignedIn -> {
                 navigation.navigateToBoardScreen()
@@ -88,7 +101,9 @@ fun LoginScreen(
             navigation = navigation,
             screenData = data,
             viewModel = viewModel,
-            loading = loading
+            loading = loading,
+            error = error,
+            errorMessage = errorMessage,
         )
     }
 }
@@ -100,6 +115,8 @@ fun LoginScreenContent(
     screenData: LoginScreenData,
     viewModel: LoginScreenViewModel,
     loading: Boolean,
+    error: Boolean,
+    errorMessage: String,
 ) {
 
     Box(
@@ -131,6 +148,7 @@ fun LoginScreenContent(
                 onValueChange = {
                     viewModel.onEmailChange(it)
                 },
+                isError = error,
                 label = {
                     Text(stringResource(R.string.email))
                 }
@@ -144,16 +162,26 @@ fun LoginScreenContent(
                 onValueChange = {
                     viewModel.onPasswordChange(it)
                 },
+                isError = error,
                 label = {
                     Text(stringResource(R.string.password))
                 },
                 visualTransformation = PasswordVisualTransformation()
             )
 
+            if(error){
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = errorMessage,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
             OutlinedButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(36.dp),
+                    .padding(32.dp),
                 enabled = screenData.signIn.email != null && screenData.signIn.password != null,
                 onClick = {
                     viewModel.signIn()

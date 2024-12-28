@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.auth.AuthRemoteRepositoryImpl
+import cz.mendelu.projek.constants.UNAUTHORIZED
 import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -70,8 +71,17 @@ class LoginScreenViewModel @Inject constructor(
                 }
                 is CommunicationResult.Error -> {
                     Log.d("LoginScreenViewModel", "Error ${result.error}")
-                    _uiState.update {
-                        LoginScreenUIState.Error(LoginScreenError(R.string.error))
+                    when(result.error.code){
+                        UNAUTHORIZED -> {
+                            _uiState.update {
+                                LoginScreenUIState.Error(LoginScreenError(R.string.sign_in_unauthorized))
+                            }
+                        }
+                        else -> {
+                            _uiState.update {
+                                LoginScreenUIState.Error(LoginScreenError(R.string.error))
+                            }
+                        }
                     }
                 }
                 is CommunicationResult.Exception -> {
