@@ -15,4 +15,10 @@ interface AuthAPI {
     suspend fun signIn(
         @Body signIn: SignIn
     ): Response<TokenResponse>
+
+    @Headers(CONTENT_TYPE_APPLICATION_JSON)
+    @POST("auth/create")
+    suspend fun create(
+        @Body userCreate: UserCreate
+    ): Response<Any>
 }

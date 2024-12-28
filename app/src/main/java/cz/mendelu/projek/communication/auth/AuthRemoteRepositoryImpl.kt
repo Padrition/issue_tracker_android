@@ -11,4 +11,12 @@ class AuthRemoteRepositoryImpl @Inject constructor(private val repository: AuthA
             processException(ex)
         }
     }
+
+    override suspend fun create(create: UserCreate): CommunicationResult<Any> {
+        return try{
+            handleResponse(repository.create(create))
+        }catch (ex: Exception){
+            processException(ex)
+        }
+    }
 }

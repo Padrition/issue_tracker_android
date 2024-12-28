@@ -6,5 +6,6 @@ interface INavigationRouter {
     fun getNavController(): NavController
     fun navigateToLoginScreen()
     fun navigateToRegisterScreen()
+    fun navigateToBoardScreen()
     fun returnBack()
 }

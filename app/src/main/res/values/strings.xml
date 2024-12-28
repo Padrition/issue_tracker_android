@@ -4,4 +4,17 @@
     <string name="connectionError">Connection Error</string>
     <string name="error">Error</string>
     <string name="exception">Exception</string>
+    <string name="password_mismatch">Passwords do not match</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="login_button">"Login "</string>
+    <string name="if_already_registered">if you already have an account</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="sign_up_header">Sign up</string>
+    <string name="create_an_account">"Or create an account by "</string>
+    <string name="sign_up_button">singing up</string>
+    <string name="login">Login</string>
+    <string name="login_header">Login</string>
+    <string name="boards_screen_top_bar_text">Your boards</string>
 </resources>

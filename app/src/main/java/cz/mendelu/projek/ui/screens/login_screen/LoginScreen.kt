@@ -73,13 +73,11 @@ fun LoginScreen(
             is LoginScreenUIState.LoginCredentialsChanged -> {
                 data = it.data
             }
-
             is LoginScreenUIState.Error -> {
 
             }
-
             is LoginScreenUIState.SignedIn -> {
-
+                navigation.navigateToBoardScreen()
             }
         }
     }
@@ -119,7 +117,7 @@ fun LoginScreenContent(
         ) {
             Spacer(Modifier.weight(0.2f))
             Text(
-                text = "Login",
+                text = stringResource(R.string.login_header),
                 fontFamily = MPLUSRounded1C,
                 fontWeight = FontWeight.Normal,
                 fontSize = 64.sp,
@@ -134,7 +132,7 @@ fun LoginScreenContent(
                     viewModel.onEmailChange(it)
                 },
                 label = {
-                    Text("Email")
+                    Text(stringResource(R.string.email))
                 }
             )
 
@@ -147,7 +145,7 @@ fun LoginScreenContent(
                     viewModel.onPasswordChange(it)
                 },
                 label = {
-                    Text("Password")
+                    Text(stringResource(R.string.password))
                 },
                 visualTransformation = PasswordVisualTransformation()
             )
@@ -156,18 +154,19 @@ fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(36.dp),
+                enabled = screenData.signIn.email != null && screenData.signIn.password != null,
                 onClick = {
                     viewModel.signIn()
                 }
             ) {
-                Text("Login")
+                Text(stringResource(R.string.login))
             }
 
             Spacer(Modifier.weight(1.0f))
 
             Row {
                 Text(
-                    text = "Or create an account by ",
+                    text = stringResource(R.string.create_an_account),
                     fontFamily = MPLUSRounded1C,
                     fontWeight = FontWeight.Normal,
                 )
@@ -176,7 +175,7 @@ fun LoginScreenContent(
                         .clickable {
                             navigation.navigateToRegisterScreen()
                         },
-                    text = "singing up",
+                    text = stringResource(R.string.sign_up_button),
                     fontFamily = MPLUSRounded1C,
                     fontWeight = FontWeight.Bold,
                 )
