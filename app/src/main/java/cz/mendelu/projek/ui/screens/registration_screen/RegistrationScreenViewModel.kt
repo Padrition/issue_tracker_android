@@ -7,6 +7,7 @@ import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.auth.AuthRemoteRepositoryImpl
 import cz.mendelu.projek.communication.auth.SignIn
+import cz.mendelu.projek.constants.CONFLICT
 import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ class RegistrationScreenViewModel @Inject constructor(
         MutableStateFlow(value = RegistrationScreenUIState.Idle)
     val uiState: StateFlow<RegistrationScreenUIState> get() = _uiState.asStateFlow()
 
-    var data = RegisterScreenData()
+    var data = RegistrationScreenData()
 
     fun onEmailChange(email: String?){
         data.create.email = email
@@ -77,8 +78,17 @@ class RegistrationScreenViewModel @Inject constructor(
                 }
                 is CommunicationResult.Error -> {
                     Log.d("RegistrationScreenViewModel", "Error : ${response.error}")
-                    _uiState.update {
-                        RegistrationScreenUIState.Error(RegistrationScreenError(R.string.error))
+                    when(response.error.code){
+                        CONFLICT -> {
+                            _uiState.update {
+                                RegistrationScreenUIState.Error(RegistrationScreenError(R.string.user_conflict))
+                            }
+                        }
+                        else -> {
+                            _uiState.update {
+                                RegistrationScreenUIState.Error(RegistrationScreenError(R.string.error))
+                            }
+                        }
                     }
                 }
                 is CommunicationResult.Exception -> {

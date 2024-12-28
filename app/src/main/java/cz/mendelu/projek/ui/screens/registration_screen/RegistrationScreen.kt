@@ -25,10 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.mendelu.projek.R
 import cz.mendelu.projek.navigation.INavigationRouter
 import cz.mendelu.projek.ui.elements.BaseScreen
-import cz.mendelu.projek.ui.screens.login_screen.LoginScreenUIState
 import cz.mendelu.projek.ui.theme.MPLUSRounded1C
 
 @Composable
@@ -50,7 +49,7 @@ fun RegistrationScreen(
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     var data by remember {
-        mutableStateOf(RegisterScreenData())
+        mutableStateOf(RegistrationScreenData())
     }
 
     var loading by remember {
@@ -64,6 +63,20 @@ fun RegistrationScreen(
     }
 
     passwordMismatch = viewModel.checkPasswordMismatch()
+
+    var error by remember {
+        mutableStateOf(false)
+    }
+
+    error = state.value is RegistrationScreenUIState.Error
+
+    var errorMessage by remember {
+        mutableStateOf("")
+    }
+
+    if (error){
+        errorMessage = stringResource(id = (state.value as RegistrationScreenUIState.Error).error.communicationError)
+    }
 
     state.value.let {
         when(it){
@@ -88,6 +101,8 @@ fun RegistrationScreen(
             viewModel = viewModel,
             loading = loading,
             passwordMismatch = passwordMismatch,
+            error = error,
+            errorMessage = errorMessage,
         )
     }
 
@@ -97,10 +112,12 @@ fun RegistrationScreen(
 fun RegisterScreen(
     paddingValues: PaddingValues,
     navigation: INavigationRouter,
-    screenData: RegisterScreenData,
+    screenData: RegistrationScreenData,
     viewModel: RegistrationScreenViewModel,
     loading: Boolean,
     passwordMismatch: Boolean,
+    error: Boolean,
+    errorMessage: String,
 ) {
 
     Box(
@@ -129,6 +146,7 @@ fun RegisterScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 36.dp),
                 value = screenData.create.email ?: "",
+                isError = error,
                 onValueChange = {
                     viewModel.onEmailChange(it)
                 },
@@ -145,6 +163,7 @@ fun RegisterScreen(
                 onValueChange = {
                     viewModel.onPasswordChange(it)
                 },
+                isError = error || passwordMismatch,
                 label = {
                     Text(stringResource(R.string.password))
                 },
@@ -162,6 +181,7 @@ fun RegisterScreen(
                 label = {
                     Text(stringResource(R.string.repeat_password))
                 },
+                isError = error || passwordMismatch,
                 supportingText = {
                     if (passwordMismatch){
                         Text(
@@ -173,10 +193,19 @@ fun RegisterScreen(
                 visualTransformation = PasswordVisualTransformation()
             )
 
+            if(error){
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = errorMessage,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
             OutlinedButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(36.dp),
+                    .padding(32.dp),
                 enabled = !passwordMismatch && screenData.create.email != null,
                 onClick = {
                     viewModel.register()
