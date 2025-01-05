@@ -1,10 +1,14 @@
 package cz.mendelu.projek.ui.screens.boards_screen
 
 import android.util.Log
+import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
+import cz.mendelu.projek.ui.screens.login_screen.LoginScreen
+import cz.mendelu.projek.ui.screens.login_screen.LoginScreenError
 import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,12 +42,21 @@ class BoardScreenViewModel @Inject constructor(
             when(result){
                 is CommunicationResult.ConnectionError -> {
                     Log.d("BoardScreenViewModel", "Connection Error")
+                    _uiState.update {
+                        BoardScreenUIState.Error(BoardScreenError(R.string.connectionError))
+                    }
                 }
                 is CommunicationResult.Error -> {
                     Log.d("BoardScreenViewModel", "Error : ${result.error}")
+                    _uiState.update {
+                        BoardScreenUIState.Error(BoardScreenError(R.string.error))
+                    }
                 }
                 is CommunicationResult.Exception -> {
                     Log.d("BoardScreenViewModel", "Exception : ${result.exception}")
+                    _uiState.update {
+                        BoardScreenUIState.Error(BoardScreenError(R.string.exception))
+                    }
                 }
                 is CommunicationResult.Success -> {
                     Log.d("BoardScreenViewModel", "Success : ${result.data}")

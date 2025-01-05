@@ -5,4 +5,5 @@ import java.io.Serializable
 sealed class BoardScreenUIState(): Serializable {
     object Loading: BoardScreenUIState()
     class Loaded(var data: BoardScreenData): BoardScreenUIState()
+    class Error(val error: BoardScreenError): BoardScreenUIState()
 }

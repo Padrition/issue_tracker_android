@@ -19,4 +19,5 @@
     <string name="boards_screen_top_bar_text">Your boards</string>
     <string name="sign_in_unauthorized">Invalid email or password</string>
     <string name="user_conflict">This user already exists</string>
+    <string name="description_settings">Settings</string>
 </resources>
