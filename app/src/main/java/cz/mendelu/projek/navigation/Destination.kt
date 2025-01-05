@@ -7,4 +7,5 @@ sealed class Destination(
     object RegisterScreen: Destination(route = "register_screen")
     object BoardsScreen: Destination(route = "boards_screen")
     object AddBoardScreen: Destination(route = "add_board_screen")
+    object BoardScreen: Destination(route = "board_screen")
 }

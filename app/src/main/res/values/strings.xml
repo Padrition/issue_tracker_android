@@ -32,4 +32,6 @@
     <string name="new_board_board_name_is_empty">Board must have a name</string>
     <string name="error_max_retry_reched">Max retry reached</string>
     <string name="refresh_token_missing">Refresh token is missing</string>
+    <string name="description_board_settings">Board settings</string>
+    <string name="board">Board</string>
 </resources>

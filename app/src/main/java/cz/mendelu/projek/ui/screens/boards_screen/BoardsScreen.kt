@@ -1,22 +1,16 @@
 package cz.mendelu.projek.ui.screens.boards_screen
 
 import android.util.Log
-import android.widget.ImageButton
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -29,15 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.mendelu.projek.R
-import cz.mendelu.projek.navigation.Destination
 import cz.mendelu.projek.navigation.INavigationRouter
 import cz.mendelu.projek.ui.elements.BaseScreen
 import cz.mendelu.projek.ui.elements.BoardItem
-import cz.mendelu.projek.ui.elements.PlaceHolderScreen
 import cz.mendelu.projek.ui.elements.PlaceholderScreenContent
 
 @Composable
@@ -46,21 +37,21 @@ fun BoardsScreen(
 ){
     Log.d("BoardsScreen", "Entered Boards Screen")
 
-    val viewModel = hiltViewModel<BoardScreenViewModel>()
+    val viewModel = hiltViewModel<BoardsScreenViewModel>()
 
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     var data by remember {
-        mutableStateOf(BoardScreenData())
+        mutableStateOf(BoardsScreenData())
     }
 
     state.value.let {
         when(it){
-            is BoardScreenUIState.Loaded -> {
+            is BoardsScreenUIState.Loaded -> {
                 data = it.data
             }
-            BoardScreenUIState.Loading -> {}
-            is BoardScreenUIState.Error -> {}
+            BoardsScreenUIState.Loading -> {}
+            is BoardsScreenUIState.Error -> {}
         }
     }
 
@@ -78,11 +69,11 @@ fun BoardsScreen(
                 )
             }
         },
-        placeholderScreenContent = if (state.value is BoardScreenUIState.Error){
+        placeholderScreenContent = if (state.value is BoardsScreenUIState.Error){
             PlaceholderScreenContent(
                 image = R.drawable.communicationerror,
                 title = null,
-                text = stringResource(id = (state.value as BoardScreenUIState.Error).error.communicationError)
+                text = stringResource(id = (state.value as BoardsScreenUIState.Error).error.communicationError)
             )
         } else null,
         floatingActionButton = {
@@ -107,7 +98,7 @@ fun BoardsScreen(
 fun BoardsScreenContent(
     navigation: INavigationRouter,
     paddingValues: PaddingValues,
-    screenData: BoardScreenData,
+    screenData: BoardsScreenData,
 ){
     if (screenData.boards.isEmpty()){
         Box(
@@ -131,7 +122,16 @@ fun BoardsScreenContent(
         ) {
             screenData.boards.forEach { board ->
                 item {
-                    BoardItem(board)
+                    BoardItem(
+                        board = board,
+                        onClick = {
+                            if(board.id != null){
+                                board.id!!.oid.let {
+                                    navigation.navigateToSingleBoardScreen(it!!)
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }

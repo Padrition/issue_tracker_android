@@ -16,12 +16,14 @@ import cz.mendelu.projek.communication.board.Board
 
 @Composable
 fun BoardItem(
-    board: Board
+    board: Board,
+    onClick: () -> Unit,
 ){
     OutlinedCard (
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)

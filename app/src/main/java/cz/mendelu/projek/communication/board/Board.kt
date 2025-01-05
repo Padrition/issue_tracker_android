@@ -11,5 +11,5 @@ data class Board (
     var createdBy: String?,
     var members: List<String>?,
     var categories: List<Category>?,
-    var issues: List<Any>,
+    var issues: List<Any>?,
 )

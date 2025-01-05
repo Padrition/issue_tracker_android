@@ -8,9 +8,11 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface BoardAPI {
 
+    @Headers(CONTENT_TYPE_APPLICATION_JSON)
     @GET("board/boards")
     suspend fun getBoards(
         @Header(AUTHORIZATION) token: String
@@ -22,5 +24,11 @@ interface BoardAPI {
         @Header(AUTHORIZATION) token: String,
         @Body boardCreate: BoardCreate
     ): Response<Any>
+
+    @GET("board/get/{id}")
+    suspend fun getBoard(
+        @Header(AUTHORIZATION) token: String,
+        @Path("id") id: String
+    ): Response<Board>
 
 }

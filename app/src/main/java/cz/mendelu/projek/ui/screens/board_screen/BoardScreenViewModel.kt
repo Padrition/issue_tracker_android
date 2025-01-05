@@ -1,19 +1,14 @@
-package cz.mendelu.projek.ui.screens.boards_screen
+package cz.mendelu.projek.ui.screens.board_screen
 
 import android.util.Log
-import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
-import cz.mendelu.projek.constants.BAD_GATEWAY
-import cz.mendelu.projek.ui.screens.login_screen.LoginScreen
-import cz.mendelu.projek.ui.screens.login_screen.LoginScreenError
 import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,15 +25,22 @@ class BoardScreenViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _uiState: MutableStateFlow<BoardScreenUIState> =
-        MutableStateFlow(value = BoardScreenUIState.Loading)
+        MutableStateFlow(value = BoardScreenUIState.Idle)
     val uiState: StateFlow<BoardScreenUIState> get() = _uiState.asStateFlow()
 
     var data = BoardScreenData()
 
-    init {
+    fun getBoard(id: String){
         viewModelScope.launch {
+            _uiState.update {
+                BoardScreenUIState.Loading
+            }
+
             val result = withContext(Dispatchers.IO){
-                repository.getBoards(dataStoreManager.accessTokenFlow.first()!!)
+                repository.getBoard(
+                    token = dataStoreManager.accessTokenFlow.first()!!,
+                    id = id,
+                )
             }
             when(result){
                 is CommunicationResult.ConnectionError -> {
@@ -49,17 +51,8 @@ class BoardScreenViewModel @Inject constructor(
                 }
                 is CommunicationResult.Error -> {
                     Log.d("BoardScreenViewModel", "Error : ${result.error}")
-                    when(result.error.code){
-                        BAD_GATEWAY -> {
-                            _uiState.update {
-                                BoardScreenUIState.Error(BoardScreenError(R.string.bad_gateway_error))
-                            }
-                        }
-                        else -> {
-                            _uiState.update {
-                                BoardScreenUIState.Error(BoardScreenError(R.string.error))
-                            }
-                        }
+                    _uiState.update {
+                        BoardScreenUIState.Error(BoardScreenError(R.string.error))
                     }
                 }
                 is CommunicationResult.Exception -> {
@@ -69,15 +62,16 @@ class BoardScreenViewModel @Inject constructor(
                     }
                 }
                 is CommunicationResult.Success -> {
-                    Log.d("BoardScreenViewModel", "Success : ${result.data}")
+                    Log.d("BoardScreenViewModel", "Success: ${result.data}")
 
-                    data.boards = result.data
+                    data.board = result.data
 
                     _uiState.update {
                         BoardScreenUIState.Loaded(data)
                     }
                 }
             }
+
         }
     }
 }
