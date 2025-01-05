@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
+import cz.mendelu.projek.constants.BAD_GATEWAY
 import cz.mendelu.projek.ui.screens.login_screen.LoginScreen
 import cz.mendelu.projek.ui.screens.login_screen.LoginScreenError
 import cz.mendelu.projek.utils.DataStoreManager
@@ -48,8 +49,17 @@ class BoardScreenViewModel @Inject constructor(
                 }
                 is CommunicationResult.Error -> {
                     Log.d("BoardScreenViewModel", "Error : ${result.error}")
-                    _uiState.update {
-                        BoardScreenUIState.Error(BoardScreenError(R.string.error))
+                    when(result.error.code){
+                        BAD_GATEWAY -> {
+                            _uiState.update {
+                                BoardScreenUIState.Error(BoardScreenError(R.string.bad_gateway_error))
+                            }
+                        }
+                        else -> {
+                            _uiState.update {
+                                BoardScreenUIState.Error(BoardScreenError(R.string.error))
+                            }
+                        }
                     }
                 }
                 is CommunicationResult.Exception -> {

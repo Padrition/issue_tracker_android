@@ -7,5 +7,6 @@ interface INavigationRouter {
     fun navigateToLoginScreen()
     fun navigateToRegisterScreen()
     fun navigateToBoardScreen()
+    fun navigateToAddBoardScreen()
     fun returnBack()
 }

@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import cz.mendelu.projek.ui.screens.add_board_screen.AddBoardScreen
 import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreen
 import cz.mendelu.projek.ui.screens.login_screen.LoginScreen
 import cz.mendelu.projek.ui.screens.registration_screen.RegistrationScreen
@@ -34,6 +35,10 @@ fun NavGraph (
 
         composable(Destination.BoardsScreen.route){
             BoardsScreen(navigation)
+        }
+
+        composable(Destination.AddBoardScreen.route){
+            AddBoardScreen(navigation)
         }
     }
 }

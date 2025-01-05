@@ -19,6 +19,10 @@ class NavigationRouterImpl(private val navController: NavController) : INavigati
         navController.navigate(Destination.BoardsScreen.route)
     }
 
+    override fun navigateToAddBoardScreen() {
+        navController.navigate(Destination.AddBoardScreen.route)
+    }
+
     override fun returnBack() {
         navController.popBackStack()
     }

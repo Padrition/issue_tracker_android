@@ -21,4 +21,10 @@ interface AuthAPI {
     suspend fun create(
         @Body userCreate: UserCreate
     ): Response<Any>
+
+    @Headers(CONTENT_TYPE_APPLICATION_JSON)
+    @POST("auth/refresh")
+    suspend fun refresh(
+        @Body token: String
+    ): Response<TokenResponse>
 }
