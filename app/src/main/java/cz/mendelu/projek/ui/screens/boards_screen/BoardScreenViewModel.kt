@@ -8,7 +8,12 @@ import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
 import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,10 +23,17 @@ class BoardScreenViewModel @Inject constructor(
     private val repository: BoardRemoteRepositoryImpl,
     private val dataStoreManager: DataStoreManager,
 ): ViewModel() {
+
+    private val _uiState: MutableStateFlow<BoardScreenUIState> =
+        MutableStateFlow(value = BoardScreenUIState.Loading)
+    val uiState: StateFlow<BoardScreenUIState> get() = _uiState.asStateFlow()
+
+    var data = BoardScreenData()
+
     init {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO){
-                repository.getBoards(dataStoreManager.accessTokenFlow.first()!!) //TODO Redesign token creation
+                repository.getBoards(dataStoreManager.accessTokenFlow.first()!!)
             }
             when(result){
                 is CommunicationResult.ConnectionError -> {
@@ -35,6 +47,12 @@ class BoardScreenViewModel @Inject constructor(
                 }
                 is CommunicationResult.Success -> {
                     Log.d("BoardScreenViewModel", "Success : ${result.data}")
+
+                    data.boards = result.data
+
+                    _uiState.update {
+                        BoardScreenUIState.Loaded(data)
+                    }
                 }
             }
         }
