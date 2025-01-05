@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import cz.mendelu.projek.R
 import cz.mendelu.projek.navigation.Destination
 import cz.mendelu.projek.navigation.INavigationRouter
@@ -18,6 +19,8 @@ fun BoardsScreen(
     navigation: INavigationRouter
 ){
     Log.d("BoardsScreen", "Entered Boards Screen")
+
+    val viewModel = hiltViewModel<BoardScreenViewModel>()
 
     BaseScreen(
         topBarText = stringResource(R.string.boards_screen_top_bar_text)
