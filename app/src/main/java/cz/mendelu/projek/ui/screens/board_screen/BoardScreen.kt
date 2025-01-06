@@ -104,6 +104,10 @@ fun BoardScreenContent(
                 item {
                     CategoryBoard(
                         category = category,
+                        issues = listOf(),
+                        onIssueClick = {
+
+                        },
                     )
                 }
             }
