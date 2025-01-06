@@ -34,4 +34,8 @@
     <string name="refresh_token_missing">Refresh token is missing</string>
     <string name="description_board_settings">Board settings</string>
     <string name="board">Board</string>
+    <string name="category_default_name">No category name</string>
+    <string name="issue_default_title">No Title</string>
+    <string name="issue_default_description">No description</string>
+    <string name="issue_default_priority">No priority</string>
 </resources>

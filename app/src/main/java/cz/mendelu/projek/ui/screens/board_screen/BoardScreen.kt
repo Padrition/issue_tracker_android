@@ -23,6 +23,7 @@ import cz.mendelu.projek.R
 import cz.mendelu.projek.navigation.Destination
 import cz.mendelu.projek.navigation.INavigationRouter
 import cz.mendelu.projek.ui.elements.BaseScreen
+import cz.mendelu.projek.ui.elements.CategoryBoard
 import cz.mendelu.projek.utils.parseColor
 
 @Composable
@@ -99,11 +100,10 @@ fun BoardScreenContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ){
-            screenData.board.categories!!.forEach {
+            screenData.board.categories!!.forEach { category ->
                 item {
-                    Text(
-                        text = it.name ?: "No category name",
-                        color = parseColor(it.color ?: "#123456"),
+                    CategoryBoard(
+                        category = category,
                     )
                 }
             }
