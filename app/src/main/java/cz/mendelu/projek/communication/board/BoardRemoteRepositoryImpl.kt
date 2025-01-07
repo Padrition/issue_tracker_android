@@ -34,4 +34,15 @@ class BoardRemoteRepositoryImpl @Inject constructor(private var repository: Boar
             processException(ex)
         }
     }
+
+    override suspend fun deleteBoard(token: String, id: String): CommunicationResult<Any> {
+        return try{
+            handleResponse(repository.deleteBoard(
+                token = BEARER + token,
+                id = id
+            ))
+        }catch (ex: Exception){
+            processException(ex)
+        }
+    }
 }

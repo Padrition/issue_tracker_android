@@ -39,4 +39,10 @@
     <string name="issue_default_description">No description</string>
     <string name="issue_default_priority">No priority</string>
     <string name="no_issue_placeholder">No issues yet</string>
+    <string name="baord_settings">Board settings</string>
+    <string name="description_delete_board">Delete board</string>
+    <string name="description_save_baord_chenges">Save boards changes</string>
+    <string name="delete_board_confirm">Are you sure you want to delete this board?</string>
+    <string name="delete_board_button">Delete board</string>
+    <string name="cancel">Cancel</string>
 </resources>

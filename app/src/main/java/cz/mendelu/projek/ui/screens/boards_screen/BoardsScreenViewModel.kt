@@ -7,6 +7,10 @@ import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
 import cz.mendelu.projek.constants.BAD_GATEWAY
+import cz.mendelu.projek.constants.UNAUTHORIZED
+import cz.mendelu.projek.ui.screens.add_board_screen.AddBoardScreenError
+import cz.mendelu.projek.ui.screens.add_board_screen.AddBoardScreenUIState
+import cz.mendelu.projek.utils.AuthHelper
 import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +27,7 @@ import javax.inject.Inject
 class BoardsScreenViewModel @Inject constructor(
     private val repository: BoardRemoteRepositoryImpl,
     private val dataStoreManager: DataStoreManager,
+    private val authHelper: AuthHelper,
 ): ViewModel() {
 
     private val _uiState: MutableStateFlow<BoardsScreenUIState> =
@@ -32,6 +37,18 @@ class BoardsScreenViewModel @Inject constructor(
     var data = BoardsScreenData()
 
     init {
+        getBoards()
+    }
+
+    private fun getBoards(retryCount: Int = 0){
+        if(retryCount > 3){
+            _uiState.update {
+                BoardsScreenUIState.Error(BoardsScreenError(R.string.error_max_retry_reched))
+            }
+
+            return
+        }
+
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO){
                 repository.getBoards(dataStoreManager.accessTokenFlow.first()!!)
@@ -46,6 +63,16 @@ class BoardsScreenViewModel @Inject constructor(
                 is CommunicationResult.Error -> {
                     Log.d("BoardScreenViewModel", "Error : ${result.error}")
                     when(result.error.code){
+                        UNAUTHORIZED -> {
+                            authHelper.handleTokenException(
+                                onRetry = {getBoards(retryCount +1)},
+                                onError = { error ->
+                                    _uiState.update {
+                                        BoardsScreenUIState.Error(BoardsScreenError(error))
+                                    }
+                                }
+                            )
+                        }
                         BAD_GATEWAY -> {
                             _uiState.update {
                                 BoardsScreenUIState.Error(BoardsScreenError(R.string.bad_gateway_error))

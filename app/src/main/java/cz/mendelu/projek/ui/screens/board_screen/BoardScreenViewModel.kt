@@ -6,6 +6,10 @@ import androidx.lifecycle.viewModelScope
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
+import cz.mendelu.projek.constants.UNAUTHORIZED
+import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreenError
+import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreenUIState
+import cz.mendelu.projek.utils.AuthHelper
 import cz.mendelu.projek.utils.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +26,7 @@ import javax.inject.Inject
 class BoardScreenViewModel @Inject constructor(
     private val repository: BoardRemoteRepositoryImpl,
     private val dataStoreManager: DataStoreManager,
+    private val authHelper: AuthHelper,
 ): ViewModel() {
 
     private val _uiState: MutableStateFlow<BoardScreenUIState> =
@@ -30,7 +35,15 @@ class BoardScreenViewModel @Inject constructor(
 
     var data = BoardScreenData()
 
-    fun getBoard(id: String){
+    fun getBoard(id: String, retryCount: Int = 0){
+        if(retryCount > 3){
+            _uiState.update {
+                BoardScreenUIState.Error(BoardScreenError(R.string.error_max_retry_reched))
+            }
+
+            return
+        }
+
         viewModelScope.launch {
             _uiState.update {
                 BoardScreenUIState.Loading
@@ -51,8 +64,22 @@ class BoardScreenViewModel @Inject constructor(
                 }
                 is CommunicationResult.Error -> {
                     Log.d("BoardScreenViewModel", "Error : ${result.error}")
-                    _uiState.update {
-                        BoardScreenUIState.Error(BoardScreenError(R.string.error))
+                    when(result.error.code){
+                        UNAUTHORIZED -> {
+                            authHelper.handleTokenException(
+                                onRetry = {getBoard(id,retryCount +1)},
+                                onError = { error ->
+                                    _uiState.update {
+                                        BoardScreenUIState.Error(BoardScreenError(error))
+                                    }
+                                }
+                            )
+                        }
+                        else -> {
+                            _uiState.update {
+                                BoardScreenUIState.Error(BoardScreenError(R.string.error))
+                            }
+                        }
                     }
                 }
                 is CommunicationResult.Exception -> {

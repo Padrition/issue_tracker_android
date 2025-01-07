@@ -4,6 +4,7 @@ import cz.mendelu.projek.constants.AUTHORIZATION
 import cz.mendelu.projek.constants.CONTENT_TYPE_APPLICATION_JSON
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -30,5 +31,11 @@ interface BoardAPI {
         @Header(AUTHORIZATION) token: String,
         @Path("id") id: String
     ): Response<Board>
+
+    @DELETE("board/delete/{id}")
+    suspend fun deleteBoard(
+        @Header(AUTHORIZATION) token: String,
+        @Path("id") id: String
+    ): Response<Any>
 
 }

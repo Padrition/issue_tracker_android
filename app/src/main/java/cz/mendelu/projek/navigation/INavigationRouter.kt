@@ -9,5 +9,6 @@ interface INavigationRouter {
     fun navigateToBoardScreen()
     fun navigateToAddBoardScreen()
     fun navigateToSingleBoardScreen(boardId: String)
+    fun navigateToBoardSettingsScreen(boardId: String)
     fun returnBack()
 }

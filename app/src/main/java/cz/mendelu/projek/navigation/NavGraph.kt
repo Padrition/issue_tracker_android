@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cz.mendelu.projek.ui.screens.add_board_screen.AddBoardScreen
 import cz.mendelu.projek.ui.screens.board_screen.BoardScreen
+import cz.mendelu.projek.ui.screens.board_settings.BoardSettingsScreen
 import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreen
 import cz.mendelu.projek.ui.screens.login_screen.LoginScreen
 import cz.mendelu.projek.ui.screens.registration_screen.RegistrationScreen
@@ -52,6 +53,18 @@ fun NavGraph (
             ){
             val id = it.arguments?.getString("id")
             BoardScreen(navigation, id)
+        }
+
+        composable(Destination.BoardSettingsScreen.route + "/{id}",
+            arguments = listOf(
+                navArgument("id"){
+                    type = NavType.StringType
+                    defaultValue = "0"
+                }
+            )
+        ){
+            val id = it.arguments?.getString("id")
+            BoardSettingsScreen(navigation, id)
         }
     }
 }

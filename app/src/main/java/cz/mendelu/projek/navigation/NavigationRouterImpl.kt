@@ -27,6 +27,10 @@ class NavigationRouterImpl(private val navController: NavController) : INavigati
         navController.navigate(Destination.BoardScreen.route + "/$boardId")
     }
 
+    override fun navigateToBoardSettingsScreen(boardId: String) {
+        navController.navigate(Destination.BoardSettingsScreen.route + "/$boardId")
+    }
+
     override fun returnBack() {
         navController.popBackStack()
     }

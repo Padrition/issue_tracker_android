@@ -63,7 +63,7 @@ fun BoardScreen(
         actions = {
             IconButton(
                 onClick = {
-
+                    navigation.navigateToBoardSettingsScreen(id!!)
                 }
             ) {
                 Icon(
