@@ -8,4 +8,5 @@ interface IBoardRemoteRepository: IBaseRemoteRepository {
     suspend fun createBoard(token: String, create: BoardCreate): CommunicationResult<Any>
     suspend fun getBoard(token: String, id: String): CommunicationResult<Board>
     suspend fun deleteBoard(token: String, id: String): CommunicationResult<Any>
+    suspend fun updateBoard(token: String, update: BoardUpdate): CommunicationResult<Any>
 }

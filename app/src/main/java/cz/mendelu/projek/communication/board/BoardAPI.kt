@@ -9,6 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface BoardAPI {
@@ -36,6 +37,12 @@ interface BoardAPI {
     suspend fun deleteBoard(
         @Header(AUTHORIZATION) token: String,
         @Path("id") id: String
+    ): Response<Any>
+
+    @PUT("board/update")
+    suspend fun updateBoard(
+        @Header(AUTHORIZATION) token: String,
+        @Body boardUpdate: BoardUpdate
     ): Response<Any>
 
 }

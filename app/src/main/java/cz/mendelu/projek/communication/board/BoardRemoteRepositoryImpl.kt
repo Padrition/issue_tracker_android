@@ -45,4 +45,15 @@ class BoardRemoteRepositoryImpl @Inject constructor(private var repository: Boar
             processException(ex)
         }
     }
+
+    override suspend fun updateBoard(token: String, update: BoardUpdate): CommunicationResult<Any> {
+        return try {
+            handleResponse(repository.updateBoard(
+                token = BEARER + token,
+                boardUpdate = update
+            ))
+        }catch (ex: Exception){
+            processException(ex)
+        }
+    }
 }

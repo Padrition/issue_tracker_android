@@ -9,4 +9,7 @@ sealed class BoardSettingsScreenUIState(): Serializable {
     class Error(var error: BoardSettingScreenError): BoardSettingsScreenUIState()
     object Deleted: BoardSettingsScreenUIState()
     class onChage(var data: BoardSettingsScreenData): BoardSettingsScreenUIState()
+    object MemberIsPresent: BoardSettingsScreenUIState()
+    object NotAValidEmail: BoardSettingsScreenUIState()
+    object Updated: BoardSettingsScreenUIState()
 }

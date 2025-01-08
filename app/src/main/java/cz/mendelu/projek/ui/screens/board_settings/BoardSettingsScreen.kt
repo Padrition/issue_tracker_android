@@ -2,9 +2,7 @@ package cz.mendelu.projek.ui.screens.board_settings
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,23 +20,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,7 +56,6 @@ import cz.mendelu.projek.R
 import cz.mendelu.projek.constants.CategoryColors
 import cz.mendelu.projek.navigation.INavigationRouter
 import cz.mendelu.projek.ui.elements.BaseScreen
-import cz.mendelu.projek.ui.screens.board_screen.BoardScreenViewModel
 import cz.mendelu.projek.utils.parseColor
 
 @Composable
@@ -78,6 +76,18 @@ fun BoardSettingsScreen(
         mutableStateOf(false)
     }
 
+    var memberIsPresentError by remember {
+        mutableStateOf(false)
+    }
+
+    memberIsPresentError = state.value is BoardSettingsScreenUIState.MemberIsPresent
+
+    var notAnEmail by remember {
+        mutableStateOf(false)
+    }
+
+    notAnEmail = state.value is BoardSettingsScreenUIState.NotAValidEmail
+
     state.value.let {
         when(it){
             is BoardSettingsScreenUIState.Error -> {}
@@ -95,6 +105,13 @@ fun BoardSettingsScreen(
             }
             is BoardSettingsScreenUIState.onChage -> {
                 data = it.data
+            }
+            BoardSettingsScreenUIState.MemberIsPresent -> {
+            }
+            BoardSettingsScreenUIState.NotAValidEmail -> {
+            }
+            BoardSettingsScreenUIState.Updated -> {
+                navigation.returnBack()
             }
         }
     }
@@ -117,7 +134,7 @@ fun BoardSettingsScreen(
             }
             IconButton(
                 onClick = {
-
+                    viewModel.updateBoard()
                 }
             ) {
                 Icon(
@@ -134,12 +151,12 @@ fun BoardSettingsScreen(
             onDialogDismiss = {showDialog = false},
             onClick = {
                 if (id != null){
-                    viewModel.deleteBoard(
-                        id
-                    )
+                    viewModel.deleteBoard()
                 }
             },
             screenData = data,
+            memberIsPresent = memberIsPresentError,
+            notAnEmail = notAnEmail,
         )
     }
 
@@ -153,9 +170,14 @@ fun BoardSettingsContent(
     onDialogDismiss: () -> Unit,
     onClick: () -> Unit,
     screenData: BoardSettingsScreenData,
+    memberIsPresent: Boolean,
+    notAnEmail: Boolean,
 ){
-    var selectedCategoryIndex by remember { mutableStateOf(-1) }
+    var selectedCategoryIndex by remember { mutableIntStateOf(-1) }
     var isColorDialogVisible by remember { mutableStateOf(false) }
+
+    var newMember by remember { mutableStateOf("") }
+    var newMemberEmpty by remember { mutableStateOf(false) }
 
     if(showDeleteDialog){
         DeleteDialog(
@@ -282,6 +304,86 @@ fun BoardSettingsContent(
         ) {
             Text(stringResource(R.string.add_section))
         }
+
+        if(screenData.board.members != null){
+            Column (
+                modifier = Modifier
+                    .padding(8.dp)
+            ) {
+                screenData.board.members!!.forEachIndexed { index, member ->
+                    InputChip(
+                        modifier = Modifier
+                            .padding(top = 4.dp),
+                        onClick = {},
+                        label = { Text(member) },
+                        selected = true,
+                        avatar = {
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = stringResource(R.string.description_avatar),
+                                Modifier.size(InputChipDefaults.AvatarSize),
+                            )
+                        },
+                        trailingIcon = {
+                            if (member != screenData.board.createdBy){
+                                IconButton(
+                                    onClick = {
+                                        viewModel.deleteMember(index)
+                                    },
+                                    modifier = Modifier
+                                        .size(InputChipDefaults.AvatarSize)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Delete,
+                                        contentDescription = stringResource(R.string.description_clear_member),
+                                        Modifier.size(InputChipDefaults.AvatarSize)
+                                    )
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = newMember,
+            onValueChange = {
+                newMemberEmpty = false
+                newMember = it
+            },
+            supportingText = {
+                if(memberIsPresent){
+                    Text(stringResource(R.string.member_exists_error))
+                }
+                if(notAnEmail){
+                    Text(stringResource(R.string.not_an_email_error))
+                }
+            },
+            isError = newMemberEmpty || memberIsPresent || notAnEmail,
+            label = {
+                Text(stringResource(R.string.invite_member_lable))
+            }
+        )
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            onClick = {
+                if(newMember.isNotEmpty()){
+                    viewModel.inviteMember(newMember)
+                    newMember = ""
+                }else{
+                    newMemberEmpty = true
+                }
+            }
+        ) {
+            Text(stringResource(R.string.invite_member))
+        }
+
+
     }
 
 }

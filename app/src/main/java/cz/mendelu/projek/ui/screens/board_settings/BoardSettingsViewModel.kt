@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
+import cz.mendelu.projek.communication.board.BoardUpdate
 import cz.mendelu.projek.communication.board.Category
 import cz.mendelu.projek.constants.BAD_GATEWAY
 import cz.mendelu.projek.constants.CategoryColors
@@ -17,6 +18,7 @@ import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreenError
 import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreenUIState
 import cz.mendelu.projek.utils.AuthHelper
 import cz.mendelu.projek.utils.DataStoreManager
+import cz.mendelu.projek.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +42,111 @@ class BoardSettingsViewModel @Inject constructor(
     val uiState: StateFlow<BoardSettingsScreenUIState> get() = _uiState.asStateFlow()
 
     var data = BoardSettingsScreenData()
+
+    fun updateBoard(retryCount: Int = 0){
+        if(retryCount > 3){
+            _uiState.update {
+                BoardSettingsScreenUIState.Error(BoardSettingScreenError(R.string.error_max_retry_reched))
+            }
+
+            return
+        }
+        _uiState.update {
+            BoardSettingsScreenUIState.Loading
+        }
+        viewModelScope.launch {
+
+            val result = withContext(Dispatchers.IO){
+                repository.updateBoard(
+                    dataStoreManager.accessTokenFlow.first()!!,
+                    //TODO add check on values
+                    BoardUpdate(
+                        id = data.board.id!!.oid,
+                        name = data.board.name,
+                        description = data.board.description,
+                        members = data.board.members,
+                        categories = data.board.categories
+                    )
+                )
+            }
+            when(result){
+                is CommunicationResult.ConnectionError -> {
+                    Log.d("BoardScreenViewModel", "Connection Error")
+                    _uiState.update {
+                        BoardSettingsScreenUIState.Error(BoardSettingScreenError(R.string.connectionError))
+                    }
+                }
+                is CommunicationResult.Error -> {
+                    Log.d("BoardScreenViewModel", "Error: ${result.error}")
+                    when(result.error.code){
+                        UNAUTHORIZED -> {
+                            authHelper.handleTokenException(
+                                onRetry = {updateBoard(retryCount +1)},
+                                onError = { error ->
+                                    _uiState.update {
+                                        BoardSettingsScreenUIState.Error(BoardSettingScreenError(error))
+                                    }
+                                }
+                            )
+                        }
+                        else -> {
+                            _uiState.update {
+                                BoardSettingsScreenUIState.Error(BoardSettingScreenError(R.string.error))
+                            }
+                        }
+                    }
+                }
+                is CommunicationResult.Exception -> {
+                    Log.d("BoardScreenViewModel", "Exception: ${result.exception}")
+                    _uiState.update {
+                        BoardSettingsScreenUIState.Error(BoardSettingScreenError(R.string.connectionError))
+                    }
+                }
+                is CommunicationResult.Success -> {
+                    Log.d("BoardScreenViewModel", "Success")
+                    _uiState.update {
+                        BoardSettingsScreenUIState.Updated
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteMember(index: Int){
+        if (data.board.members != null){
+            if(index in 0..data.board.members!!.lastIndex){
+                data.board.members!!.removeAt(index)
+            }
+        }
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
+
+    fun inviteMember(newMember: String){
+        val trimmedOewMember = newMember.replace("\\s".toRegex(), "")
+        if(!trimmedOewMember.isValidEmail()){
+            _uiState.update {
+                BoardSettingsScreenUIState.NotAValidEmail
+            }
+            return
+        }
+        if(data.board.members == null){
+            data.board.members = mutableListOf(trimmedOewMember)
+        }else{
+            if(data.board.members!!.contains(trimmedOewMember)){
+                _uiState.update {
+                    BoardSettingsScreenUIState.MemberIsPresent
+                }
+                return
+            }else{
+                data.board.members!!.add(trimmedOewMember)
+            }
+        }
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
 
     fun onSectionColorChange(index: Int, color: String){
         if(data.board.categories != null){
@@ -99,7 +206,7 @@ class BoardSettingsViewModel @Inject constructor(
         }
     }
 
-    fun deleteBoard(id: String, retryCount: Int = 0){
+    fun deleteBoard(retryCount: Int = 0){
         if(retryCount > 3){
             _uiState.update {
                 BoardSettingsScreenUIState.Error(BoardSettingScreenError(R.string.error_max_retry_reched))
@@ -116,7 +223,7 @@ class BoardSettingsViewModel @Inject constructor(
             val result = withContext(Dispatchers.IO){
                 repository.deleteBoard(
                     dataStoreManager.accessTokenFlow.first()!!,
-                    id
+                    data.board.id!!.oid!!
                 )
             }
             when(result){
