@@ -31,7 +31,7 @@ interface BoardAPI {
     suspend fun getBoard(
         @Header(AUTHORIZATION) token: String,
         @Path("id") id: String
-    ): Response<Board>
+    ): Response<BoardResponse>
 
     @DELETE("board/delete/{id}")
     suspend fun deleteBoard(

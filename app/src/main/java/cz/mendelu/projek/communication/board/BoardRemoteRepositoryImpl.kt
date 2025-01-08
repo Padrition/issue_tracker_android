@@ -24,7 +24,7 @@ class BoardRemoteRepositoryImpl @Inject constructor(private var repository: Boar
         }
     }
 
-    override suspend fun getBoard(token: String, id: String): CommunicationResult<Board> {
+    override suspend fun getBoard(token: String, id: String): CommunicationResult<BoardResponse> {
         return try {
             handleResponse(repository.getBoard(
                 token = BEARER + token,

@@ -51,6 +51,8 @@ class BoardSettingsViewModel @Inject constructor(
 
             return
         }
+        data.board.let {
+        }
         _uiState.update {
             BoardSettingsScreenUIState.Loading
         }
@@ -59,9 +61,8 @@ class BoardSettingsViewModel @Inject constructor(
             val result = withContext(Dispatchers.IO){
                 repository.updateBoard(
                     dataStoreManager.accessTokenFlow.first()!!,
-                    //TODO add check on values
                     BoardUpdate(
-                        id = data.board.id!!.oid,
+                        id = data.board.id,
                         name = data.board.name,
                         description = data.board.description,
                         members = data.board.members,
@@ -223,7 +224,7 @@ class BoardSettingsViewModel @Inject constructor(
             val result = withContext(Dispatchers.IO){
                 repository.deleteBoard(
                     dataStoreManager.accessTokenFlow.first()!!,
-                    data.board.id!!.oid!!
+                    data.board.id!!
                 )
             }
             when(result){

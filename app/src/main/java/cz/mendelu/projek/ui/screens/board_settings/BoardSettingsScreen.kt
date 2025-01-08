@@ -122,16 +122,19 @@ fun BoardSettingsScreen(
             navigation.returnBack()
         },
         actions = {
-            IconButton(
-                onClick = {
-                    showDialog = true
+            if(data.board.isCreator == true){
+                IconButton(
+                    onClick = {
+                        showDialog = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.description_delete_board)
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(R.string.description_delete_board)
-                )
             }
+
             IconButton(
                 onClick = {
                     viewModel.updateBoard()
