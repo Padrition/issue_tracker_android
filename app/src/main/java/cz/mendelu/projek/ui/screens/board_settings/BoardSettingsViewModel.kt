@@ -7,7 +7,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
+import cz.mendelu.projek.communication.board.Category
 import cz.mendelu.projek.constants.BAD_GATEWAY
+import cz.mendelu.projek.constants.CategoryColors
 import cz.mendelu.projek.constants.UNAUTHORIZED
 import cz.mendelu.projek.ui.screens.board_screen.BoardScreenError
 import cz.mendelu.projek.ui.screens.board_screen.BoardScreenUIState
@@ -38,6 +40,64 @@ class BoardSettingsViewModel @Inject constructor(
     val uiState: StateFlow<BoardSettingsScreenUIState> get() = _uiState.asStateFlow()
 
     var data = BoardSettingsScreenData()
+
+    fun onSectionColorChange(index: Int, color: String){
+        if(data.board.categories != null){
+            data.board.categories!![index].color = color
+        }
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
+
+    fun addSection(){
+        if(data.board.categories == null){
+            data.board.categories = mutableListOf(Category("", CategoryColors.BLUE))
+        }else{
+            data.board.categories!!.add(Category("", CategoryColors.BLUE))
+        }
+
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
+
+    fun onSectionDelete(index: Int) {
+        if(data.board.categories != null){
+            if(index in 0..data.board.categories!!.lastIndex){
+                data.board.categories!!.removeAt(index)
+            }
+        }
+
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
+    fun onNameChange(name: String?){
+        data.board.name = name
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
+
+    fun onDescriptionChange(description: String?){
+        data.board.description = description
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
+
+    fun onSectionNameChange(index: Int, name: String){
+        if(data.board.categories != null){
+            if(index in 0..data.board.categories!!.lastIndex){
+                data.board.categories!![index].name = name
+            }
+        }
+
+        _uiState.update {
+            BoardSettingsScreenUIState.onChage(data)
+        }
+    }
 
     fun deleteBoard(id: String, retryCount: Int = 0){
         if(retryCount > 3){

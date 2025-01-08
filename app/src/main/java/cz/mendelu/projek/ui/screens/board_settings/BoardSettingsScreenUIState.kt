@@ -8,4 +8,5 @@ sealed class BoardSettingsScreenUIState(): Serializable {
     class Loaded(var data: BoardSettingsScreenData): BoardSettingsScreenUIState()
     class Error(var error: BoardSettingScreenError): BoardSettingsScreenUIState()
     object Deleted: BoardSettingsScreenUIState()
+    class onChage(var data: BoardSettingsScreenData): BoardSettingsScreenUIState()
 }

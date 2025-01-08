@@ -10,6 +10,6 @@ data class Board (
     var description: String?,
     var createdBy: String?,
     var members: List<String>?,
-    var categories: List<Category>?,
+    var categories: MutableList<Category>?,
     var issues: List<Any>?,
 )

@@ -1,6 +1,8 @@
 package cz.mendelu.projek.ui.screens.board_screen
 
 import android.graphics.Color
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,8 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.mendelu.projek.R
@@ -92,7 +96,19 @@ fun BoardScreenContent(
 ){
 
     if (screenData.board.categories.isNullOrEmpty()){
-
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ){
+            Column{
+                Text(
+                    text = stringResource(R.string.no_categories_yet),
+                    fontWeight = FontWeight.Light,
+                )
+            }
+        }
     }else{
 
         LazyColumn (

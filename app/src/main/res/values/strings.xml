@@ -45,4 +45,15 @@
     <string name="delete_board_confirm">Are you sure you want to delete this board?</string>
     <string name="delete_board_button">Delete board</string>
     <string name="cancel">Cancel</string>
+    <string name="no_categories_yet">No categories yet</string>
+    <string name="section_name">Section name</string>
+    <string name="description_clear_section">Clear section</string>
+    <string name="add_section">Add section</string>
+    <string name="description_section_color">Section color</string>
+    <string name="color_hint">Hint: tap the star to change color</string>
+    <string name="blue">Blue</string>
+    <string name="green">Green</string>
+    <string name="yellow">Yellow</string>
+    <string name="orange">Orange</string>
+    <string name="red">Red</string>
 </resources>
