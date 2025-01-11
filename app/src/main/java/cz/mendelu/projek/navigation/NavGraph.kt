@@ -14,6 +14,7 @@ import cz.mendelu.projek.ui.screens.add_issue_screen.AddIssueScreen
 import cz.mendelu.projek.ui.screens.board_screen.BoardScreen
 import cz.mendelu.projek.ui.screens.board_settings.BoardSettingsScreen
 import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreen
+import cz.mendelu.projek.ui.screens.issue_screen.IssueScreen
 import cz.mendelu.projek.ui.screens.login_screen.LoginScreen
 import cz.mendelu.projek.ui.screens.registration_screen.RegistrationScreen
 
@@ -78,6 +79,18 @@ fun NavGraph (
         ){
             val id = it.arguments?.getString("id")
             AddIssueScreen(navigation, id)
+        }
+
+        composable(Destination.IssueScreen.route + "/{id}",
+            arguments = listOf(
+                navArgument("id"){
+                    type = NavType.StringType
+                    defaultValue = "0"
+                }
+            )
+        ){
+            val id = it.arguments?.getString("id")
+            IssueScreen(navigation, id)
         }
     }
 }

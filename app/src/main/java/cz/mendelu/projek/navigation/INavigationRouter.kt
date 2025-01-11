@@ -11,5 +11,6 @@ interface INavigationRouter {
     fun navigateToSingleBoardScreen(boardId: String)
     fun navigateToBoardSettingsScreen(boardId: String)
     fun navigateToAddIssueScreen(boardId: String)
+    fun navigateToIssueScreen(issueId: String)
     fun returnBack()
 }

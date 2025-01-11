@@ -70,4 +70,8 @@
     <string name="description_add_issue">Add issue</string>
     <string name="error_title_cannot_be_empty">Title cannot be empty</string>
     <string name="error_description_cannot_be_empty">Description cannot be empty</string>
+    <string name="issue">Issue\n</string>
+    <string name="issue_default_status">Status</string>
+    <string name="issue_status_chip">Status:</string>
+    <string name="issue_priority_chip">Prioroty:</string>
 </resources>

@@ -29,7 +29,7 @@ import cz.mendelu.projek.utils.parseColor
 fun CategoryBoard(
     category: Category,
     issues: List<Issue>,
-    onIssueClick: () -> Unit,
+    onIssueClick: (String) -> Unit,
 ){
 
     Column(
@@ -82,7 +82,7 @@ fun CategoryBoard(
                             IssueItem(
                                 issue
                             ) {
-                                onIssueClick()
+                                onIssueClick(issue.id!!.oid!!)
                             }
                         }
                     }

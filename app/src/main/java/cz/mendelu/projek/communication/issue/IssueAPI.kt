@@ -24,4 +24,10 @@ interface IssueAPI {
         @Header(AUTHORIZATION) token: String,
         @Body createIssue: IssueCreate,
     ): Response<Any>
+
+    @GET("issue/{id}")
+    suspend fun getIssue(
+        @Header(AUTHORIZATION) token: String,
+        @Path("id") id: String,
+    ): Response<Issue>
 }

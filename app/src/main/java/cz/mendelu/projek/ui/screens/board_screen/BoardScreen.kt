@@ -1,6 +1,5 @@
 package cz.mendelu.projek.ui.screens.board_screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,8 +43,6 @@ fun BoardScreen(
     var data by remember {
         mutableStateOf(BoardScreenData())
     }
-
-    Log.d("BoardScreen", "state: ${state.value}")
 
     LaunchedEffect(Unit) {
         viewModel.resetState()
@@ -142,7 +139,7 @@ fun BoardScreenContent(
                         category = category,
                         issues = screenData.issues.filter { it.status == category.name },
                         onIssueClick = {
-
+                            navigation.navigateToIssueScreen(it)
                         },
                     )
                 }
