@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,12 @@ fun BoardScreen(
 
     var data by remember {
         mutableStateOf(BoardScreenData())
+    }
+
+    Log.d("BoardScreen", "state: ${state.value}")
+
+    LaunchedEffect(Unit) {
+        viewModel.resetState()
     }
 
     state.value.let {

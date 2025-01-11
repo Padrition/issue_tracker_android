@@ -35,6 +35,12 @@ class BoardScreenViewModel @Inject constructor(
 
     var data = BoardScreenData()
 
+    fun resetState(){
+        _uiState.update {
+            BoardScreenUIState.Idle
+        }
+    }
+
     private fun getIssues(id:String, retryCount: Int = 0){
         if(retryCount > 3){
             _uiState.update {
