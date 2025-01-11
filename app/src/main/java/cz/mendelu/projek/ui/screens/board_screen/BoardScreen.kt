@@ -45,7 +45,9 @@ fun BoardScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.resetState()
+        if (state.value != BoardScreenUIState.Idle){
+            viewModel.resetState()
+        }
     }
 
     state.value.let {
@@ -139,7 +141,7 @@ fun BoardScreenContent(
                         category = category,
                         issues = screenData.issues.filter { it.status == category.name },
                         onIssueClick = {
-                            navigation.navigateToIssueScreen(it)
+                            navigation.navigateToIssueScreen(it, screenData.board.id!!)
                         },
                     )
                 }
