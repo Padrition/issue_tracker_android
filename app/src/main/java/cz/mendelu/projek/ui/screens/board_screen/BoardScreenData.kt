@@ -2,6 +2,7 @@ package cz.mendelu.projek.ui.screens.board_screen
 
 import cz.mendelu.projek.communication.board.Board
 import cz.mendelu.projek.communication.board.BoardResponse
+import cz.mendelu.projek.communication.issue.Issue
 
 data class BoardScreenData(
     var board: BoardResponse = BoardResponse(
@@ -13,5 +14,6 @@ data class BoardScreenData(
         categories = null,
         issues = null,
         isCreator = null
-    )
+    ),
+    var issues: List<Issue> = mutableListOf()
 )

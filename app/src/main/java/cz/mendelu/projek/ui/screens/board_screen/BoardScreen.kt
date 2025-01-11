@@ -1,6 +1,6 @@
 package cz.mendelu.projek.ui.screens.board_screen
 
-import android.graphics.Color
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -24,11 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.mendelu.projek.R
-import cz.mendelu.projek.navigation.Destination
 import cz.mendelu.projek.navigation.INavigationRouter
 import cz.mendelu.projek.ui.elements.BaseScreen
 import cz.mendelu.projek.ui.elements.CategoryBoard
-import cz.mendelu.projek.utils.parseColor
 
 @Composable
 fun BoardScreen(
@@ -61,6 +61,19 @@ fun BoardScreen(
 
     BaseScreen (
         topBarText = data.board.name ?: stringResource(R.string.board),
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = {
+                    if (id != null){
+                        navigation.navigateToAddIssueScreen(
+                            id
+                        )
+                    }
+                },
+                icon =  { Icon(Icons.Filled.Edit, stringResource(R.string.add_issue)) },
+                text = { Text(stringResource(R.string.add_issue)) },
+            )
+        },
         onBackClick = {
             navigation.returnBack()
         },
@@ -120,7 +133,7 @@ fun BoardScreenContent(
                 item {
                     CategoryBoard(
                         category = category,
-                        issues = listOf(),
+                        issues = screenData.issues.filter { it.status == category.name },
                         onIssueClick = {
 
                         },

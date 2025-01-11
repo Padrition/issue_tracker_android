@@ -2,6 +2,7 @@ package cz.mendelu.projek.di
 
 import cz.mendelu.projek.communication.auth.AuthAPI
 import cz.mendelu.projek.communication.board.BoardAPI
+import cz.mendelu.projek.communication.issue.IssueAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +24,12 @@ object ApiModule {
     @Singleton
     fun provideBoardAPI(retrofit: Retrofit): BoardAPI{
         return retrofit.create(BoardAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideIssueAPI(retrofit: Retrofit): IssueAPI{
+        return retrofit.create(IssueAPI::class.java)
     }
 
 }

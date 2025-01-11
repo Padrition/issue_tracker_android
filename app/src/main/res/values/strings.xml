@@ -62,4 +62,5 @@
     <string name="invite_member_lable">Invite</string>
     <string name="member_exists_error">User already a member</string>
     <string name="not_an_email_error">Not a valid email</string>
+    <string name="add_issue">Add issue</string>
 </resources>

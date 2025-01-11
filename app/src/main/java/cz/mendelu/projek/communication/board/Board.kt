@@ -11,5 +11,5 @@ data class Board (
     var createdBy: String?,
     var members: MutableList<String>?,
     var categories: MutableList<Category>?,
-    var issues: List<Any>?,
+    var issues: List<IdWrapper>?,
 )
