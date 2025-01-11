@@ -63,4 +63,11 @@
     <string name="member_exists_error">User already a member</string>
     <string name="not_an_email_error">Not a valid email</string>
     <string name="add_issue">Add issue</string>
+    <string name="issue_title">Title</string>
+    <string name="issue_description">Description</string>
+    <string name="issue_status">Status</string>
+    <string name="select_category">Select issue status</string>
+    <string name="description_add_issue">Add issue</string>
+    <string name="error_title_cannot_be_empty">Title cannot be empty</string>
+    <string name="error_description_cannot_be_empty">Description cannot be empty</string>
 </resources>
