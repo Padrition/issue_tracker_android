@@ -9,6 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,14 +32,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.mendelu.projek.R
+import cz.mendelu.projek.constants.Priorities
 import cz.mendelu.projek.navigation.INavigationRouter
 import cz.mendelu.projek.ui.elements.BaseScreen
+import cz.mendelu.projek.ui.elements.DropDownCategoryMenu
+import cz.mendelu.projek.ui.elements.DropDownPriorityMenu
 import cz.mendelu.projek.ui.theme.MPLUSRounded1C
 
 @Composable
 fun IssueScreen(
     navigation: INavigationRouter,
-    id: String?
+    id: String?,
+    boardId: String?,
 ){
     val viewModel = hiltViewModel<IssueScreenViewModel>()
 
@@ -43,16 +53,30 @@ fun IssueScreen(
         mutableStateOf(IssueScreenData())
     }
 
+    var editing by remember {
+        mutableStateOf(false)
+    }
+
+    var nullError by remember {
+        mutableStateOf(false)
+    }
+
     state.value.let {
         when(it){
             is IssueScreenUIState.Error -> {}
             is IssueScreenUIState.Loaded -> {
                 data = it.data
+                if(data.board.categories != null){
+                    data.selectedCategory = data.board.categories!!.first{ it.name == data.issue.status}
+                }
             }
             IssueScreenUIState.Loading -> {
-                if(id != null){
-                    viewModel.loadIssue(id)
+                if(id != null && boardId != null){
+                    viewModel.loadData(id, boardId)
                 }
+            }
+            is IssueScreenUIState.DataChanged -> {
+                data = it.data
             }
         }
     }
@@ -62,10 +86,122 @@ fun IssueScreen(
         onBackClick = {
             navigation.returnBack()
         },
+        actions = {
+            if(editing){
+                IconButton(
+                    onClick = {
+                        editing = false
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = stringResource(R.string.description_save_issue)
+                    )
+                }
+            }else{
+                IconButton(
+                    onClick = {
+                        editing = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.description_edit_issue)
+                    )
+                }
+            }
+        }
     ) {
-        IssueScreenContent(
-            paddingValues = it,
-            screenData = data,
+        if(editing){
+            IssueScreenEditData(
+                paddingValues = it,
+                screenData = data,
+                viewModel= viewModel,
+                nullError = nullError,
+            )
+        }else{
+            IssueScreenContent(
+                paddingValues = it,
+                screenData = data,
+            )
+        }
+    }
+
+}
+
+@Composable
+fun IssueScreenEditData(
+    paddingValues: PaddingValues,
+    screenData: IssueScreenData,
+    viewModel: IssueScreenViewModel,
+    nullError: Boolean,
+){
+
+    Column (
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(vertical = 8.dp, horizontal = 16.dp)
+    ){
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            value = screenData.issueEdit.title ?: "",
+            onValueChange = {
+                viewModel.onTitleChange(it)
+            },
+            isError = nullError,
+            supportingText = {
+                if(nullError){
+                    Text(stringResource(R.string.error_title_cannot_be_empty))
+                }
+            },
+            label = {
+                Text(stringResource(R.string.issue_title))
+            }
+        )
+
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            value = screenData.issueEdit.description ?: "",
+            onValueChange = {
+                viewModel.onDescriptionChange(it)
+            },
+            isError = nullError,
+            supportingText = {
+                if(nullError){
+                    Text(stringResource(R.string.error_description_cannot_be_empty))
+                }
+            },
+            label = {
+                Text(stringResource(R.string.issue_description))
+            }
+        )
+
+        DropDownCategoryMenu(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            options = screenData.board.categories ?: listOf(),
+            selectedOption = screenData.selectedCategory,
+            onOptionSelected = {
+                viewModel.onCategoryChange(it)
+            }
+        )
+
+        DropDownPriorityMenu(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            options = Priorities.toList(),
+            selectedOption = screenData.issueEdit.priority ?: Priorities.MEDIUM,
+            onOptionSelected = {
+                viewModel.onPriorityChange(it)
+            }
         )
     }
 

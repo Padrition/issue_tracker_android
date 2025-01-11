@@ -81,16 +81,21 @@ fun NavGraph (
             AddIssueScreen(navigation, id)
         }
 
-        composable(Destination.IssueScreen.route + "/{id}",
+        composable(Destination.IssueScreen.route + "/{id}"+"/{boardId}",
             arguments = listOf(
                 navArgument("id"){
+                    type = NavType.StringType
+                    defaultValue = "0"
+                },
+                navArgument("boardId"){
                     type = NavType.StringType
                     defaultValue = "0"
                 }
             )
         ){
             val id = it.arguments?.getString("id")
-            IssueScreen(navigation, id)
+            val boardId = it.arguments?.getString("boardId")
+            IssueScreen(navigation, id, boardId)
         }
     }
 }

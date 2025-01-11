@@ -35,8 +35,8 @@ class NavigationRouterImpl(private val navController: NavController) : INavigati
         navController.navigate(Destination.AddIssueScreen.route + "/$boardId")
     }
 
-    override fun navigateToIssueScreen(issueId: String) {
-        navController.navigate(Destination.IssueScreen.route + "/$issueId")
+    override fun navigateToIssueScreen(issueId: String, boardId: String) {
+        navController.navigate(Destination.IssueScreen.route + "/$issueId"+ "/$boardId")
     }
 
     override fun returnBack() {

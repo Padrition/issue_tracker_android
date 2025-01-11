@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
+import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
+import cz.mendelu.projek.communication.board.Category
 import cz.mendelu.projek.communication.issue.IssueRemoteRepositoryImpl
 import cz.mendelu.projek.constants.UNAUTHORIZED
 import cz.mendelu.projek.utils.AuthHelper
@@ -22,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class IssueScreenViewModel @Inject constructor(
-    private val repository: IssueRemoteRepositoryImpl,
+    private val issueRepository: IssueRemoteRepositoryImpl,
+    private val boardRepository: BoardRemoteRepositoryImpl,
     private val dataStoreManager: DataStoreManager,
     private val authHelper: AuthHelper,
 ): ViewModel() {
@@ -34,7 +37,49 @@ class IssueScreenViewModel @Inject constructor(
 
     var data = IssueScreenData()
 
-    fun loadIssue(id:String, retryCount: Int = 0){
+    fun onPriorityChange(priority: String){
+        data.issueEdit.priority = priority
+
+        _uiState.update {
+            IssueScreenUIState.DataChanged(data)
+        }
+    }
+
+    fun onCategoryChange(category: Category){
+        data.selectedCategory = category
+        data.issueEdit.status = category.name
+
+        _uiState.update {
+            IssueScreenUIState.DataChanged(data)
+        }
+    }
+
+    fun onDescriptionChange(description: String?){
+        data.issueEdit.description = description
+
+        _uiState.update {
+            IssueScreenUIState.DataChanged(data)
+        }
+    }
+
+    fun onTitleChange(title: String?){
+        data.issueEdit.title = title
+
+        _uiState.update {
+            IssueScreenUIState.DataChanged(data)
+        }
+    }
+
+    fun loadData(issueId: String, boardId: String){
+        loadIssue(issueId)
+        loadBoard(boardId)
+
+        _uiState.update {
+            IssueScreenUIState.Loaded(data)
+        }
+    }
+
+    private fun loadIssue(id:String, retryCount: Int = 0){
         if(retryCount > 3){
             _uiState.update {
                 IssueScreenUIState.Error(IssueScreenError(R.string.error_max_retry_reched))
@@ -45,7 +90,7 @@ class IssueScreenViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO){
-                repository.getIssue(
+                issueRepository.getIssue(
                     token = dataStoreManager.accessTokenFlow.first()!!,
                     id
                 )
@@ -87,9 +132,65 @@ class IssueScreenViewModel @Inject constructor(
                     Log.d("IssueScreenViewModel","Success: ${result.data}")
 
                     data.issue = result.data
+                    data.issueEdit = result.data
+                }
+            }
+        }
+    }
+
+    private fun loadBoard(id:String, retryCount: Int = 0){
+        if(retryCount > 3){
+            _uiState.update {
+                IssueScreenUIState.Error(IssueScreenError(R.string.error_max_retry_reched))
+            }
+
+            return
+        }
+
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO){
+                boardRepository.getBoard(
+                    token = dataStoreManager.accessTokenFlow.first()!!,
+                    id
+                )
+            }
+            when(result){
+                is CommunicationResult.ConnectionError -> {
+                    Log.d("IssueScreenViewModel","ConnectionError")
                     _uiState.update {
-                        IssueScreenUIState.Loaded(data)
+                        IssueScreenUIState.Error(IssueScreenError(R.string.connectionError))
                     }
+                }
+                is CommunicationResult.Error -> {
+                    Log.d("IssueScreenViewModel","Error : ${result.error}")
+                    when(result.error.code){
+                        UNAUTHORIZED->{
+                            authHelper.handleTokenException(
+                                onRetry = {loadBoard(id, retryCount + 1)},
+                                onError = {
+                                    _uiState.update {
+                                        IssueScreenUIState.Error(IssueScreenError(R.string.connectionError))
+                                    }
+                                }
+                            )
+                        }
+                        else -> {
+                            _uiState.update {
+                                IssueScreenUIState.Error(IssueScreenError(R.string.connectionError))
+                            }
+                        }
+                    }
+                }
+                is CommunicationResult.Exception -> {
+                    Log.d("IssueScreenViewModel","Exception: ${result.exception}")
+                    _uiState.update {
+                        IssueScreenUIState.Error(IssueScreenError(R.string.exception))
+                    }
+                }
+                is CommunicationResult.Success -> {
+                    Log.d("IssueScreenViewModel","Success: ${result.data}")
+
+                    data.board = result.data
                 }
             }
         }

@@ -74,4 +74,6 @@
     <string name="issue_default_status">Status</string>
     <string name="issue_status_chip">Status:</string>
     <string name="issue_priority_chip">Prioroty:</string>
+    <string name="description_edit_issue">Edit issue</string>
+    <string name="description_save_issue">Save issue</string>
 </resources>
