@@ -66,9 +66,6 @@ fun IssueScreen(
             is IssueScreenUIState.Error -> {}
             is IssueScreenUIState.Loaded -> {
                 data = it.data
-                if(data.board.categories != null){
-                    data.selectedCategory = data.board.categories!!.first{ it.name == data.issue.status}
-                }
             }
             IssueScreenUIState.Loading -> {
                 if(id != null && boardId != null){
@@ -102,6 +99,9 @@ fun IssueScreen(
             }else{
                 IconButton(
                     onClick = {
+                        if(data.board.categories != null){
+                            data.selectedCategory = data.board.categories!!.first()
+                        }
                         editing = true
                     }
                 ) {

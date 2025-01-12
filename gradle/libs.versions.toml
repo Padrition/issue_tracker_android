@@ -21,6 +21,17 @@ lifecycle = "2.7.0"
 
 datastore-version = "1.1.1"
 
+text-recognition = "16.0.1"
+camerax-version = "1.4.0"
+objectDetection = "17.0.2"
+tflite = "2.3.0"
+
+imageLabelingCustomCommon = "17.0.0"
+imageLabelingDefaultCommon = "17.0.0"
+imagelabelling = "17.0.9"
+imageodml = "1.0.0-beta1"
+
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -56,6 +67,27 @@ datastore = {group = "androidx.datastore", name="datastore-preferences", version
 moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi_v" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi_v" }
 moshi-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi_v" }
+
+text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "text-recognition" }
+
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax-version" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax-version" }
+camera-lifecyvle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax-version" }
+camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camerax-version" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax-version" }
+camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax-version" }
+objectdetection = { group = "com.google.mlkit", name = "object-detection", version.ref = "objectDetection" }
+objectdetection-custom = { group = "com.google.mlkit", name = "object-detection-custom", version.ref = "objectDetection" }
+
+tflite = { group = "org.tensorflow", name = "tensorflow-lite", version.ref = "tflite" }
+image-labeling-custom-common = { group = "com.google.mlkit", name = "image-labeling-custom-common", version.ref = "imageLabelingCustomCommon" }
+image-labeling-default-common = { group = "com.google.mlkit", name = "image-labeling-default-common", version.ref = "imageLabelingDefaultCommon" }
+linkfirebase = { group = "com.google.mlkit", name = "linkfirebase", version.ref = "imageLabelingDefaultCommon" }
+
+image-labeling = { group = "com.google.mlkit", name = "image-labeling", version.ref = "imagelabelling" }
+image-labeling-custom = { group = "com.google.mlkit", name = "image-labeling-custom", version.ref = "imageLabelingCustomCommon" }
+
+image-odml = { group = "com.google.android.odml", name = "image", version.ref = "imageodml" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

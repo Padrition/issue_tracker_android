@@ -53,6 +53,11 @@ class AddIssueViewModel @Inject constructor(
 
             return
         }
+        Log.d("AddIssueViewModel", "new issue: ${data.issueCreate}")
+
+        if (data.issueCreate.status == null){
+            data.issueCreate.status = data.board.categories!!.first().name
+        }
 
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO){

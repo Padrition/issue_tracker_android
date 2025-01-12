@@ -112,9 +112,10 @@ fun BoardSettingsScreen(
             BoardSettingsScreenUIState.NotAValidEmail -> {
             }
             BoardSettingsScreenUIState.Updated -> {
-                LaunchedEffect(null) {
-                    navigation.returnBack()
-                }
+//                LaunchedEffect(null) {
+//
+//                }
+                navigation.returnBack()
             }
         }
     }

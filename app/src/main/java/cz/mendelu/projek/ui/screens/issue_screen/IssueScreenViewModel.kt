@@ -144,6 +144,8 @@ class IssueScreenViewModel @Inject constructor(
         loadIssue(issueId)
         loadBoard(boardId)
 
+        Log.d("IssueScreenViewModel", "data loaded: ${data.issueEdit} \n ${data.board}")
+
         _uiState.update {
             IssueScreenUIState.Loaded(data)
         }

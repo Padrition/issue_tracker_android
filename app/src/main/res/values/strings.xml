@@ -76,4 +76,8 @@
     <string name="issue_priority_chip">Prioroty:</string>
     <string name="description_edit_issue">Edit issue</string>
     <string name="description_save_issue">Save issue</string>
+    <string name="scan_text">Scan text</string>
+    <string name="close_text_recognition">Close text recognition</string>
+    <string name="text_recognized">Recognized text</string>
+    <string name="add_to_description">Add to description</string>
 </resources>

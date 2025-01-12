@@ -54,6 +54,11 @@ android {
         compose = true
         buildConfig = true
     }
+    aaptOptions {
+        noCompress  += "tflite"
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+
 }
 
 dependencies {
@@ -98,4 +103,22 @@ dependencies {
     implementation(libs.navigation.compose)
 
     implementation(libs.lifecycle)
+
+    implementation(libs.text.recognition)
+    implementation(libs.camera.core)
+    implementation(libs.camera.view)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecyvle)
+    implementation(libs.camera.extensions)
+    implementation(libs.camera.video)
+
+    implementation(libs.objectdetection.custom)
+    implementation(libs.tflite)
+
+    implementation(libs.linkfirebase)
+
+    implementation(libs.image.labeling)
+    implementation(libs.image.labeling.custom)
+    implementation(libs.image.odml)
+
 }

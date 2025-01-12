@@ -44,11 +44,11 @@ fun BoardScreen(
         mutableStateOf(BoardScreenData())
     }
 
-    LaunchedEffect(Unit) {
-        if (state.value != BoardScreenUIState.Idle){
-            viewModel.resetState()
-        }
-    }
+//    LaunchedEffect(Unit) {
+//        if (state.value != BoardScreenUIState.Idle){
+//            viewModel.resetState()
+//        }
+//    }
 
     state.value.let {
         when(it){
