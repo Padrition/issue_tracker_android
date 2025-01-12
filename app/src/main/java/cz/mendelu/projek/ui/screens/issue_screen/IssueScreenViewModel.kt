@@ -7,7 +7,9 @@ import cz.mendelu.projek.R
 import cz.mendelu.projek.communication.CommunicationResult
 import cz.mendelu.projek.communication.board.BoardRemoteRepositoryImpl
 import cz.mendelu.projek.communication.board.Category
+import cz.mendelu.projek.communication.issue.Issue
 import cz.mendelu.projek.communication.issue.IssueRemoteRepositoryImpl
+import cz.mendelu.projek.communication.issue.IssueUpdate
 import cz.mendelu.projek.constants.UNAUTHORIZED
 import cz.mendelu.projek.utils.AuthHelper
 import cz.mendelu.projek.utils.DataStoreManager
@@ -36,6 +38,74 @@ class IssueScreenViewModel @Inject constructor(
     val uiState: StateFlow<IssueScreenUIState> get() = _uiState.asStateFlow()
 
     var data = IssueScreenData()
+
+    fun updateIssue(retryCount: Int = 0){
+        if(retryCount > 3){
+            _uiState.update {
+                IssueScreenUIState.Error(IssueScreenError(R.string.error_max_retry_reched))
+            }
+
+            return
+        }
+
+        viewModelScope.launch {
+            val response = withContext(Dispatchers.IO){
+                issueRepository.updateIssue(
+                    token = dataStoreManager.accessTokenFlow.first()!!,
+                    update = IssueUpdate(
+                        id = data.issueEdit.id!!.oid!!,
+                        title = data.issueEdit.title!!,
+                        description = data.issueEdit.description!!,
+                        status = data.issueEdit.status!!,
+                        priority = data.issueEdit.priority!!
+                    )
+                )
+            }
+            when(response){
+                is CommunicationResult.ConnectionError -> {
+                    Log.d("IssueScreenViewModel", "ConnectionError")
+                    _uiState.update {
+                        IssueScreenUIState.Error(IssueScreenError(R.string.connectionError))
+                    }
+                }
+                is CommunicationResult.Error -> {
+                    Log.d("IssueScreenViewModel", "Error: ${response.error}")
+                    when(response.error.code){
+                        UNAUTHORIZED -> {
+                            authHelper.handleTokenException(
+                                onRetry = {updateIssue(retryCount+1)},
+                                onError = {
+                                    _uiState.update {
+                                        IssueScreenUIState.Error(IssueScreenError(R.string.error))
+                                    }
+                                }
+                            )
+                        }
+                        else -> {
+                            _uiState.update {
+                                IssueScreenUIState.Error(IssueScreenError(R.string.error))
+                            }
+                        }
+                    }
+                }
+                is CommunicationResult.Exception -> {
+                    Log.d("IssueScreenViewModel", "Exception : ${response.exception}")
+                    _uiState.update {
+                        IssueScreenUIState.Error(IssueScreenError(R.string.exception))
+                    }
+                }
+                is CommunicationResult.Success -> {
+                    Log.d("IssueScreenViewModel", "Success: ${response.data}")
+
+                    data.issue = data.issueEdit
+
+                    _uiState.update {
+                        IssueScreenUIState.Loaded(data)
+                    }
+                }
+            }
+        }
+    }
 
     fun onPriorityChange(priority: String){
         data.issueEdit.priority = priority

@@ -41,4 +41,18 @@ class IssueRemoteRepositoryImpl @Inject constructor(private val repository: Issu
         }
     }
 
+    override suspend fun updateIssue(
+        token: String,
+        update: IssueUpdate
+    ): CommunicationResult<Issue> {
+        return try{
+            handleResponse(repository.updateIssue(
+                token = BEARER + token,
+                update = update
+            ))
+        }catch (ex: Exception){
+            processException(ex)
+        }
+    }
+
 }

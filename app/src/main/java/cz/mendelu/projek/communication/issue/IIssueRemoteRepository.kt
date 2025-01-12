@@ -7,4 +7,5 @@ interface IIssueRemoteRepository: IBaseRemoteRepository {
     suspend fun getBoardsIssues(token: String, id: String): CommunicationResult<List<Issue>>
     suspend fun createIssue(token: String, create: IssueCreate): CommunicationResult<Any>
     suspend fun getIssue(token: String, id: String): CommunicationResult<Issue>
+    suspend fun updateIssue(token: String, update: IssueUpdate): CommunicationResult<Issue>
 }

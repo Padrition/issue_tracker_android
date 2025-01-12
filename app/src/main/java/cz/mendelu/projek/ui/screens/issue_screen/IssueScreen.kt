@@ -91,6 +91,7 @@ fun IssueScreen(
                 IconButton(
                     onClick = {
                         editing = false
+                        viewModel.updateIssue()
                     }
                 ) {
                     Icon(

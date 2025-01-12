@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface IssueAPI {
@@ -29,5 +30,12 @@ interface IssueAPI {
     suspend fun getIssue(
         @Header(AUTHORIZATION) token: String,
         @Path("id") id: String,
+    ): Response<Issue>
+
+    @Headers(CONTENT_TYPE_APPLICATION_JSON)
+    @PUT("issue/")
+    suspend fun updateIssue(
+        @Header(AUTHORIZATION) token: String,
+        @Body update: IssueUpdate,
     ): Response<Issue>
 }
