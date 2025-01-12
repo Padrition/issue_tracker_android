@@ -80,4 +80,9 @@
     <string name="close_text_recognition">Close text recognition</string>
     <string name="text_recognized">Recognized text</string>
     <string name="add_to_description">Add to description</string>
+    <string name="settings_title">Settings</string>
+    <string name="current_language">Current Language</string>
+    <string name="language_cz">Czech</string>
+    <string name="language_eng">English</string>
+    <string name="logOut">Log Out</string>
 </resources>

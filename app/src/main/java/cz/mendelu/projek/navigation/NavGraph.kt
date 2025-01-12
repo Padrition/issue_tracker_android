@@ -17,6 +17,7 @@ import cz.mendelu.projek.ui.screens.boards_screen.BoardsScreen
 import cz.mendelu.projek.ui.screens.issue_screen.IssueScreen
 import cz.mendelu.projek.ui.screens.login_screen.LoginScreen
 import cz.mendelu.projek.ui.screens.registration_screen.RegistrationScreen
+import cz.mendelu.projek.ui.screens.settings_screen.SettingsScreen
 
 @ExperimentalFoundationApi
 @Composable
@@ -96,6 +97,10 @@ fun NavGraph (
             val id = it.arguments?.getString("id")
             val boardId = it.arguments?.getString("boardId")
             IssueScreen(navigation, id, boardId)
+        }
+
+        composable(Destination.SettingsScreen.route){
+            SettingsScreen(navigation)
         }
     }
 }

@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,6 +34,13 @@ class LoginScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             Log.d("Datastore test", "access : ${dataStoreManager.accessTokenFlow.first()} refresh: ${dataStoreManager.refreshTokenFlow.first()}")
+
+            val refreshToken = dataStoreManager.refreshTokenFlow.first()
+            if (refreshToken != null){
+                _uiState.update {
+                    LoginScreenUIState.SignedIn
+                }
+            }
         }
     }
 

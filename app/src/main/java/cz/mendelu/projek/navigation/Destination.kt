@@ -11,4 +11,5 @@ sealed class Destination(
     object BoardSettingsScreen: Destination(route = "board_settings_screen")
     object AddIssueScreen: Destination(route = "add_issue_screen")
     object IssueScreen: Destination(route = "issue_screen")
+    object SettingsScreen: Destination(route = "settings_screen")
 }
